@@ -49,5 +49,5 @@
     "ts-node": "^7.0.1",
     "typescript": "^3.3.333"
   },
-  "repository": "https://github.com/cancerberoSgx/typescript-plugin-of-mine/tree/master/ts-run"
+  "repository": "https://github.com/ddonnelly19/typescript-plugin-of-mine/tree/master/ts-run"
 }

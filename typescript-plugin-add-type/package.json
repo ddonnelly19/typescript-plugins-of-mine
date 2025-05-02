@@ -28,6 +28,6 @@
   "devDependencies": {
     "yamat": "^0.1.1"
   },
-  "repository": "https://github.com/cancerberoSgx/typescript-plugins-of-mine/tree/master/typescript-ast-util",
+  "repository": "https://github.com/ddonnelly19/typescript-plugins-of-mine/tree/master/typescript-ast-util",
   "readme": "README.md"
 }

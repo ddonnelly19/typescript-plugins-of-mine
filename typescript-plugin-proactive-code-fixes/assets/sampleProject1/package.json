@@ -24,5 +24,5 @@
   "devDependencies": {
     "typescript-plugin-proactive-code-fixes": "file:../.."
   },
-  "repository": "https://github.com/cancerberoSgx/typescript-plugins-of-mine/tree/master/typescript-ast-util"
+  "repository": "https://github.com/ddonnelly19/typescript-plugins-of-mine/tree/master/typescript-ast-util"
 }

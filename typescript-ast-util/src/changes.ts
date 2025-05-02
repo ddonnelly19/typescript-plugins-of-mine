@@ -1,47 +1,47 @@
 import * as diff from 'diff';
-import { SourceFile, TextChange, TextSpan } from 'typescript';
+import { SourceFile, TextChange } from 'typescript';
 
 /** Taken from ts-simple-ast - TODO: it behaves differently than  ts.LanguageService's getCompletionEntryDetails or getEditsForRefactor - for it to work you will need to  `reverse()`  the edits*/
 export function getTextFromFormattingEdits(sourceFile: SourceFile | string, textChanges: ReadonlyArray<TextChange>) {
-  // reverse the order
-  textChanges = [...textChanges].sort((a, b) => b.span.start - a.span.start);
-  let text = typeof (sourceFile) === 'string' ? sourceFile : sourceFile.getFullText();
+	// reverse the order
+	textChanges = [...textChanges].sort((a, b) => b.span.start - a.span.start);
+	let text = typeof (sourceFile) === 'string' ? sourceFile : sourceFile.getFullText();
 
-  for (const textChange of textChanges) {
-    const span = textChange.span
-    text = text.slice(0, span.start) + textChange.newText + text.slice(span.start + span.length);
-  }
+	for (const textChange of textChanges) {
+		const span = textChange.span
+		text = text.slice(0, span.start) + textChange.newText + text.slice(span.start + span.length);
+	}
 
-  return text;
+	return text;
 }
 
 /**
  * returns text changes that when applied to s1 will result in s2. IMPORTANT: for this to work with ts.LanguageService's getCompletionEntryDetails or getEditsForRefactor you will need to `reverse()` the returned array
  */
 export function diffAndCreateTextChanges(s1: string, s2: string): TextChange[] {
-  const result: TextChange[] = []
+	const result: TextChange[] = []
 
-  diff.structuredPatch('f1', 'f2', s1, s2, '', '').hunks.map((hunk: any) => {
-    let index = 0
+	diff.structuredPatch('f1', 'f2', s1, s2, '', '').hunks.map((hunk: any) => {
+		let index = 0
 
-    hunk.lines.map((line: string) => {
-      const add = line.startsWith('+')
-      const deletion = line.startsWith('-')
-      const s = line.substring(1, line.length) + '\n'
+		hunk.lines.map((line: string) => {
+			const add = line.startsWith('+')
+			const deletion = line.startsWith('-')
+			const s = line.substring(1, line.length) + '\n'
 
-      if (add) {
-        result.push({ newText: s, span: { start: index, length: 0 } })
-      }
-      else if (deletion) {
-        result.push({ newText: '', span: { start: index, length: s.length } })
-        index += s.length
-      }
-      else {
-        index += s.length
-      }
-    })
-  })
-  return result.reverse()
+			if (add) {
+				result.push({ newText: s, span: { start: index, length: 0 } })
+			}
+			else if (deletion) {
+				result.push({ newText: '', span: { start: index, length: s.length } })
+				index += s.length
+			}
+			else {
+				index += s.length
+			}
+		})
+	})
+	return result.reverse()
 }
 
 // /** returns TextSpan representing the addition of given string to given string in given position */
@@ -49,14 +49,36 @@ export function diffAndCreateTextChanges(s1: string, s2: string): TextChange[] {
 //   return {start: pos, length: toInsert.length}
 // }
 
-export function changeText(text: string, toInsert: {pos: number, toAdd?: string, toRemove?: string}[]): string{
-  let s = text.split('')
-  let indexIncr=0
-  toInsert.forEach(data=>{
-    data.toAdd = data.toAdd || ''
-    data.toRemove = data.toRemove || ''
-    s.splice(data.pos+indexIncr, data.toRemove.length, ...data.toAdd.split(''))
-    indexIncr+=data.toAdd.length-data.toRemove.length
-  })
-  return s.join('')
+/**
+ * Modifies a given string by applying a series of text changes at specified positions.
+ *
+ * @param text - The original string to be modified.
+ * @param toInsert - An array of objects specifying the changes to be made. Each object contains:
+ *   - `pos`: The position in the string where the change should occur.
+ *   - `toAdd` (optional): The string to be added at the specified position. Defaults to an empty string if not provided.
+ *   - `toRemove` (optional): The string to be removed starting at the specified position. Defaults to an empty string if not provided.
+ * 
+ * @returns The modified string after applying all the specified changes.
+ *
+ * @example
+ * ```typescript
+ * const originalText = "hello world";
+ * const changes = [
+ *   { pos: 6, toAdd: "beautiful " },
+ *   { pos: 0, toRemove: "he", toAdd: "He" }
+ * ];
+ * const result = changeText(originalText, changes);
+ * console.log(result); // "Hello beautiful world"
+ * ```
+ */
+export function changeText(text: string, toInsert: { pos: number, toAdd?: string, toRemove?: string }[]): string {
+	let s = text.split('')
+	let indexIncr = 0
+	toInsert.forEach(data => {
+		data.toAdd = data.toAdd || ''
+		data.toRemove = data.toRemove || ''
+		s.splice(data.pos + indexIncr, data.toRemove.length, ...data.toAdd.split(''))
+		indexIncr += data.toAdd.length - data.toRemove.length
+	})
+	return s.join('')
 }

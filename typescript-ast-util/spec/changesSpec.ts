@@ -61,7 +61,7 @@ test(s1,s2)
 
   it('diffAndCreateTextChanges using sourcefiles tsa', () => {
 
-const project = new Project({useVirtualFileSystem: true})
+const project = new Project({useInMemoryFileSystem: true})
 const file = project.createSourceFile('f1.ts', s1)
 file.applyTextChanges(
   diffAndCreateTextChanges(s1, s2).map(c=>new (TextChange as any)(c))

@@ -1,7 +1,7 @@
 {
   "name": "typescript-plugins-of-mine",
   "version": "1.0.1",
-  "description": "typescript plugins, test and experiments of cancerberosgx",
+  "description": "typescript plugins, test and experiments of ddonnelly19",
   "keywords": [
     "TypeScript",
     "TypeScript Language Service",
@@ -29,11 +29,11 @@
     "initial-install": "npx yamat run npm i --ignore-scripts && npx yamat run npm run build && npx yamat run npm i",
     "all2": "npm run clean-no-doc && npm run initial-install && npm run test"
   },
-  "repository": "https://github.com/cancerberoSgx/typescript-plugins-of-mine",
+  "repository": "https://github.com/ddonnelly19/typescript-plugins-of-mine",
   "devDependencies": {
-    "yamat": "^0.1.2"
+    "yamat": "^0.1.3"
   },
   "dependencies": {
-    "ts-morph": "^2.3.0"
+    "ts-morph": "^25.0.1"
   }
 }

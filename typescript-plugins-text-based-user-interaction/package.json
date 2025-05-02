@@ -27,5 +27,5 @@
     "jasmine": "^3.3.0",
     "ts-node": "^7.0.1"
   },
-  "repository": "https://github.com/cancerberoSgx/typescript-plugins-of-mine/tree/master/typescript-plugins-text-based-user-interaction"
+  "repository": "https://github.com/ddonnelly19/typescript-plugins-of-mine/tree/master/typescript-plugins-text-based-user-interaction"
 }

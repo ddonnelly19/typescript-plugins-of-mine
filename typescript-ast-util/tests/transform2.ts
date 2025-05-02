@@ -1,5 +1,5 @@
 
-  import * as ts from 'typescript'
+  import ts from 'typescript'
 
   const transform = {
     [ts.SyntaxKind.SourceFile]: (node: any) => {

@@ -6,3 +6,5 @@ tmp
 *.tgz
 evaluated_*
 .idea
+package-lock.json
+*/package-lock.json

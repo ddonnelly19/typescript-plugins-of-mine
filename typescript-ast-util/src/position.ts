@@ -1,5 +1,4 @@
-import * as ts from 'typescript';
-import { getKindName } from './types';
+import ts from 'typescript';
 import { findAscendant } from './node';
 
 /** 
@@ -7,9 +6,9 @@ import { findAscendant } from './node';
  * 
  */
 export function positionOrRangeToRange(positionOrRange: number | ts.TextRange): ts.TextRange {
-  return typeof positionOrRange === 'number'
-    ? { pos: positionOrRange, end: positionOrRange }
-    : positionOrRange
+	return typeof positionOrRange === 'number'
+		? { pos: positionOrRange, end: positionOrRange }
+		: positionOrRange
 }
 
 /** 
@@ -17,9 +16,9 @@ export function positionOrRangeToRange(positionOrRange: number | ts.TextRange): 
  * number. 
  */
 export function positionOrRangeToNumber(positionOrRange: number | ts.TextRange): number {
-  return typeof positionOrRange === 'number' ?
-    positionOrRange :
-    (positionOrRange as ts.TextRange).pos
+	return typeof positionOrRange === 'number' ?
+		positionOrRange :
+		(positionOrRange as ts.TextRange).pos
 }
 
 /** 
@@ -27,40 +26,41 @@ export function positionOrRangeToNumber(positionOrRange: number | ts.TextRange):
  * return true. 
  */
 export function getJsDoc(node: ts.Node, sourceFile?: ts.SourceFile): ts.JSDoc[] {
-  const result = [];
-  for (const child of node.getChildren(sourceFile)) {
-    if (child.kind !== ts.SyntaxKind.JSDocComment)
-      break;
-    result.push(child)
-  }
-  return result as ts.JSDoc[]
+	const result = [];
+	for (const child of node.getChildren(sourceFile)) {
+		if (child.kind !== ts.SyntaxKind.JSDocComment)
+			break;
+		result.push(child)
+	}
+	return result as ts.JSDoc[]
 }
 
-export function isDeclaration(node: ts.Node): boolean {
-  return getKindName(node.kind).endsWith('Declaration')
+export function isDeclaration(node: ts.Node): node is ts.Declaration {
+	//return getKindName(node.kind).endsWith('Declaration') ||
+	return (ts as any)["isDeclaration"](node);
 }
 
 export function hasName(node: ts.Node): boolean {
-  return !!(node as ts.NamedDeclaration).name
+	return !!(node as ts.NamedDeclaration).name
 }
 
 export function findChildContainingPosition(sourceFile: ts.SourceFile, position: number): ts.Node | undefined {
-  function find(node: ts.Node): ts.Node | undefined {
-    if (position >= node.getStart() && position < node.getEnd()) {
-      return ts.forEachChild(node, find) || node
-    }
-  }
-  return find(sourceFile)
+	function find(node: ts.Node): ts.Node | undefined {
+		if (position >= node.getStart() && position < node.getEnd()) {
+			return ts.forEachChild(node, find) || node
+		}
+	}
+	return find(sourceFile)
 }
 export const findDescendantContainingPosition = findChildContainingPosition
 
 export function findChildContainingRange(sourceFile: ts.SourceFile, r: ts.TextRange): ts.Node | undefined {
-  function find(node: ts.Node): ts.Node | undefined {
-    if (r.pos >= node.getStart() && r.end < node.getEnd()) {
-      return ts.forEachChild(node, find) || node
-    }
-  }
-  return find(sourceFile)
+	function find(node: ts.Node): ts.Node | undefined {
+		if (r.pos >= node.getStart() && r.end < node.getEnd()) {
+			return ts.forEachChild(node, find) || node
+		}
+	}
+	return find(sourceFile)
 }
 export const findSmallestDescendantContainingRange = findChildContainingPosition
 
@@ -69,30 +69,30 @@ export const findSmallestDescendantContainingRange = findChildContainingPosition
  * Same as [[findSmallestDescendantContainingRange]] but nto so strict r.pos <= n.start <=  r.end <= n.end.
  */
 export function findChildContainingRangeLight(sourceFile: ts.SourceFile, r: ts.TextRange): ts.Node | undefined {
-  function find(node: ts.Node): ts.Node | undefined {
-    if (r.pos >= node.getStart() && r.end <= node.getEnd()) {
-      return ts.forEachChild(node, find) || node
-    }
-  }
-  return find(sourceFile)
+	function find(node: ts.Node): ts.Node | undefined {
+		if (r.pos >= node.getStart() && r.end <= node.getEnd()) {
+			return ts.forEachChild(node, find) || node
+		}
+	}
+	return find(sourceFile)
 }
 
 export function findChildContainingRangeGetChildren(parent: ts.Node, r: ts.TextRange): ts.Node | undefined {
-  let found: ts.Node = parent.getChildren().find(node => r.pos >= node.getFullStart() && r.end <= node.getEnd())
-  return found && findChildContainingRangeGetChildren(found, r) || parent
+	let found: ts.Node = parent.getChildren().find(node => r.pos >= node.getFullStart() && r.end <= node.getEnd())
+	return found && findChildContainingRangeGetChildren(found, r) || parent
 }
 
 export function findChildContainedRange(sourceFile: ts.SourceFile, r: ts.TextRange): ts.Node | undefined {
-  function find(node: ts.Node): ts.Node | undefined {
-    if (r.pos <= node.getStart() && r.end >= node.getEnd()) {
-      return node
-    }
-    else {
-      return ts.forEachChild(node, find)
-    }
+	function find(node: ts.Node): ts.Node | undefined {
+		if (r.pos <= node.getStart() && r.end >= node.getEnd()) {
+			return node
+		}
+		else {
+			return ts.forEachChild(node, find)
+		}
 
-  }
-  return find(sourceFile)
+	}
+	return find(sourceFile)
 }
 export const findFirstDescendantContainedInRange = findChildContainedRange
 
@@ -105,19 +105,19 @@ export const findFirstDescendantContainedInRange = findChildContainedRange
  * @param predicate 
  */
 export function findParentFromPosition(
-  sourceFile: ts.SourceFile | undefined,
-  positionOrRange: number | ts.TextRange,
-  predicate: (node: ts.Node) => boolean)
-  : ts.Node | undefined {
-  if (!sourceFile) {
-    return
-  }
-  const nodeAtCursor = findChildContainingPosition(sourceFile, positionOrRangeToNumber(positionOrRange))
-  if (!nodeAtCursor) {
-    return
-  }
-  const targetNode = findAscendant(nodeAtCursor, predicate, true)
-  return targetNode || undefined
+	sourceFile: ts.SourceFile | undefined,
+	positionOrRange: number | ts.TextRange,
+	predicate: (node: ts.Node) => boolean)
+	: ts.Node | undefined {
+	if (!sourceFile) {
+		return
+	}
+	const nodeAtCursor = findChildContainingPosition(sourceFile, positionOrRangeToNumber(positionOrRange))
+	if (!nodeAtCursor) {
+		return
+	}
+	const targetNode = findAscendant(nodeAtCursor, predicate, true)
+	return targetNode || undefined
 }
 
 

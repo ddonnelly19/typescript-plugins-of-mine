@@ -29,5 +29,5 @@
     "@types/jasmine": "^2.8.8",
     "@types/node": "^10.3.2"
   },
-  "repository": "https://github.com/cancerberoSgx/typescript-plugins-of-mine/tree/master/typescript-plugin-move-file"
+  "repository": "https://github.com/ddonnelly19/typescript-plugins-of-mine/tree/master/typescript-plugin-move-file"
 }
